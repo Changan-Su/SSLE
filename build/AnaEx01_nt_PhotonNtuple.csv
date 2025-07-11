@@ -1,0 +1,15 @@
+#class tools::wcsv::ntuple
+#title PhotonCounts
+#separator 44
+#vector_separator 59
+#column int PhotonCounts
+171
+0
+4097
+4930
+0
+1059
+7471
+0
+1959
+9980
