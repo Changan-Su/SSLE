@@ -15,7 +15,7 @@
 #include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4Trd.hh"
+#include "G4Trd.hh" 
 
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
@@ -124,29 +124,59 @@ namespace B1
   //   auto physCrystal = new G4PVPlacement(nullptr, posCrystal, logicCrystal, "Crystal", logicEnv, false, 0, checkOverlaps);
   // //set the crystal as scoring volume
 
-      G4double crystal_length = 25. * cm;
-      G4double crystal_h = 5 * cm;
-      auto solidCrystal = new G4Box("Crystal", crystal_length / 2, crystal_length / 2, crystal_h / 2);
+    //   G4double crystal_length = 24.07 * cm;
+    //   G4double crystal_h = 9.03 * cm;
+    //   auto solidCrystal = new G4Box("Crystal", crystal_length / 2, crystal_length / 2, crystal_h / 2);
+    //   auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
+    //   G4ThreeVector posCrystal = G4ThreeVector(0, 0, 0);
+    //   auto physCrystal = new G4PVPlacement(
+    //     nullptr,  // no rotation
+    //     posCrystal,  // at (0,0,0)
+    //     logicCrystal,  // its logical volume
+    //     "Crystal",  // its name
+    //     logicEnv,  // its mother volume
+    //     false,  // no boolean operation
+    //     0,  // copy number
+    //     checkOverlaps  // overlaps checking
+    //   );
+    // fScoringVolume = logicCrystal;
+
+      G4double Crystal_l = 24.07 * cm;
+      G4double Crystal_h = 9.03 * cm;
+      G4double Crystal_gap = 0.01 * cm;
+      G4int Crystal_n = 8;
+      G4int Crystal_nh = 3;
+      G4double crystal_l = Crystal_l / Crystal_n - Crystal_gap;
+      G4double crystal_h = Crystal_h / Crystal_nh - Crystal_gap;
+
+      auto solidCrystal = new G4Box("Crystal", crystal_l / 2, crystal_l / 2, crystal_h / 2);
       auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
-      G4ThreeVector posCrystal = G4ThreeVector(0, 0, 0);
-      auto physCrystal = new G4PVPlacement(
-        nullptr,  // no rotation
-        posCrystal,  // at (0,0,0)
-        logicCrystal,  // its logical volume
-        "Crystal",  // its name
-        logicEnv,  // its mother volume
-        false,  // no boolean operation
-        0,  // copy number
-        checkOverlaps  // overlaps checking
-      );
-      
-    // auto physCrystal = new G4PVPlacement(nullptr, posCrystal, logicCrystal, "Crystal", logicEnv, false, 0, checkOverlaps);
+      for (int iz = 0; iz < Crystal_nh; ++iz)
+      {
 
+        for (int ix = 0; ix < Crystal_n; ++ix)
+        {
+          for (int iy = 0; iy < Crystal_n; ++iy)
+          {
+            G4double posX = -Crystal_l/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
+            G4double posY = -Crystal_h/2 + iy * (crystal_h + Crystal_gap) + crystal_h / 2;
+            G4double posZ = -Crystal_h/2 + iz * (crystal_h + Crystal_gap) + crystal_h / 2;
 
+            G4ThreeVector pos_crystal = G4ThreeVector(posX, posY, posZ);
+            G4int copyNo = iz * Crystal_n * Crystal_nh + ix * Crystal_nh + iy;
+            auto physCrystal = new G4PVPlacement(nullptr,  // no rotation
+                                                  pos_crystal,  // position
+                                                  logicCrystal,  // its logical volume
+                                                  "Unit_crystal",  // its name
+                                                  logicEnv,  // its mother volume
+                                                  false,  // no boolean operation
+                                                  copyNo,  // copy number
+                                                  checkOverlaps);  // overlaps checking
+          }
+        }
+      }
 
-
-    fScoringVolume = logicCrystal;
-
+      fScoringVolume = logicCrystal;
 
     // --- 定义 PMT 材料 ---
     G4Material* pmt_mat = nist->FindOrBuildMaterial("G4_GLASS_PLATE");

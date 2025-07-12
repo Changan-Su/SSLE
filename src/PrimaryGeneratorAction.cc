@@ -95,10 +95,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     G4Exception("PrimaryGeneratorAction::GeneratePrimaries()", "MyCode0002", JustWarning, msg);
   }
 
+  G4double rx = 24.07 * cm;  
+  G4double ry = 24.07 * cm;  
   G4double size = 0.8;
-  G4double x0 = 0;
-  G4double y0 = 0;
-  G4double z0 = -2.0 * cm;
+  G4double x0 = -rx/2 + size * G4UniformRand() * (rx);
+  G4double y0 = -ry/2 + size * G4UniformRand() * (ry);
+  G4double z0 = -10 * cm;
 
   fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
 
