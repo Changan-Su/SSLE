@@ -31,6 +31,7 @@
 #define B1PrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "DetectorConstruction.hh"
 
 class G4ParticleGun;
 class G4Event;
@@ -55,10 +56,13 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
     // method to access particle gun
     const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
+    PrimaryGeneratorAction(const DetectorConstruction* det);
+
 
   private:
     G4ParticleGun* fParticleGun = nullptr;  // pointer a to G4 gun class
     G4Box* fEnvelopeBox = nullptr;
+    const DetectorConstruction* fDetectorConstruction ;  // Pointer to the detector construction
 };
 
 }  // namespace B1

@@ -33,6 +33,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
+#include "G4runManager.hh"
 
 namespace B1
 {
@@ -49,7 +50,13 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
-  SetUserAction(new PrimaryGeneratorAction);
+    auto detConstruction = static_cast<const B1::DetectorConstruction*>(
+      G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+
+  SetUserAction(new PrimaryGeneratorAction (detConstruction));
+
+
+
 
   auto histoManager = new HistoManager();
   auto runAction = new RunAction(histoManager);
@@ -59,6 +66,7 @@ void ActionInitialization::Build() const
   SetUserAction(eventAction);
 
   SetUserAction(new SteppingAction(eventAction));
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

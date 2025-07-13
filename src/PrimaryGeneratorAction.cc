@@ -42,7 +42,8 @@ namespace B1
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PrimaryGeneratorAction::PrimaryGeneratorAction()
+PrimaryGeneratorAction::PrimaryGeneratorAction(const DetectorConstruction* det)
+  : fDetectorConstruction(det), G4VUserPrimaryGeneratorAction()
 {
   G4int n_particle = 1;
   fParticleGun = new G4ParticleGun(n_particle);
@@ -95,9 +96,11 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     G4Exception("PrimaryGeneratorAction::GeneratePrimaries()", "MyCode0002", JustWarning, msg);
   }
 
-  G4double rx = 24.07 * cm;  
-  G4double ry = 24.07 * cm;  
-  G4double size = 0.8;
+  G4double rx = fDetectorConstruction->GetCrystal_l(); // Get the crystal length from DetectorConstruction
+  G4double ry = fDetectorConstruction->GetCrystal_l(); // Assuming square cross-section for simplicity
+  // G4double rx = 24.7 * cm; 
+  // G4double ry = 24.7 * cm;
+  G4double size = 1;
   G4double x0 = -rx/2 + size * G4UniformRand() * (rx);
   G4double y0 = -ry/2 + size * G4UniformRand() * (ry);
   G4double z0 = -10 * cm;

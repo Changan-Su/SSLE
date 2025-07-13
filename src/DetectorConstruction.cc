@@ -159,7 +159,7 @@ namespace B1
           for (int iy = 0; iy < Crystal_n; ++iy)
           {
             G4double posX = -Crystal_l/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
-            G4double posY = -Crystal_h/2 + iy * (crystal_h + Crystal_gap) + crystal_h / 2;
+            G4double posY = -Crystal_l/2 + iy * (crystal_l + Crystal_gap) + crystal_l / 2;
             G4double posZ = -Crystal_h/2 + iz * (crystal_h + Crystal_gap) + crystal_h / 2;
 
             G4ThreeVector pos_crystal = G4ThreeVector(posX, posY, posZ);
@@ -177,6 +177,13 @@ namespace B1
       }
 
       fScoringVolume = logicCrystal;
+      fCrystal_n = Crystal_n; // Store the number of crystals in one dimension
+      fCrystal_l = Crystal_l; // Store the length of the crystal
+      fCrystal_h = Crystal_h; // Store the height of the crystal
+      fCrystal_gap = Crystal_gap; // Store the gap between crystals
+      fCrystal_nh = Crystal_nh; // Store the number of crystals in height
+
+
 
     // --- 定义 PMT 材料 ---
     G4Material* pmt_mat = nist->FindOrBuildMaterial("G4_GLASS_PLATE");

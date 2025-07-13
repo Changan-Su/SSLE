@@ -46,50 +46,6 @@ namespace B1
 
 SteppingAction::SteppingAction(EventAction* eventAction) : fEventAction(eventAction) {}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-// void SteppingAction::UserSteppingAction(const G4Step* step)
-// {
-//   if (!fScoringVolume||!fPMTVolume) {
-//     const auto detConstruction = static_cast<const DetectorConstruction*>(
-//       G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-//       fScoringVolume = detConstruction->GetScoringVolume();
-//       fPMTVolume = detConstruction->GetPMTVolume();  // 获取 PMT 逻辑体积
-//   }
-
-//   // get volume of the current step
-//   G4LogicalVolume* volume =
-//     step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
-//      if (volume != fScoringVolume && volume != fPMTVolume) return;
-//      const auto* secondaries = step->GetSecondaryInCurrentStep();// 获取当前步的次级粒子列表
-//      int opticalPhotonCount = 0;// 统计光子数量
-//      for (const auto& track : *secondaries) {
-//        if (track->GetDefinition()->GetParticleName() == "opticalphoton") {
-//          opticalPhotonCount++;
-//        }
-//      }
-//      if (opticalPhotonCount > 0) {
-//         if (volume == fScoringVolume){
-//           fEventAction->AddPhotonInDetector(opticalPhotonCount);// 统计光子数量
-//         }
-//         else if(volume == fPMTVolume) {
-//           fEventAction->AddPhotonInPMT(opticalPhotonCount);// 统计 PMT 中的光子数量
-//         }
-//      }
-
-
-
-//     //   // collect energy deposited in this step
-//     G4double edepStep = step->GetTotalEnergyDeposit();//本次步能量沉积
-//     G4double stepLength = step->GetStepLength();//统计步长
-
-//     //统计所有粒子能量沉积
-//      if (edepStep > 0.) {
-//         fEventAction->AddEdep(edepStep);
-//         fEventAction->AddAbsorption(edepStep, step->GetStepLength());// 统计能量吸收和步长
-//     }
-
-//   }
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
