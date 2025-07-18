@@ -113,33 +113,6 @@ namespace B1
     NaI_Tl->SetMaterialPropertiesTable(nai_mt);
 
     
-
-  //   G4double crystal_rmin = 0. * cm, crystal_rmax = 5. * cm;
-  //   G4double crystal_hz = 5 * cm;
-  //   G4double crystal_phimin = 0. * deg, crystal_phimax = 360. * deg;
-  //   auto solidCrystal = new G4Tubs("Crystal", crystal_rmin, crystal_rmax, crystal_hz/2, crystal_phimin, crystal_phimax);
-  //   auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
-  //   // auto logicCrystal = new G4LogicalVolume(solidCrystal, LXe, "Crystal");
-  //   G4ThreeVector posCrystal = G4ThreeVector(0, 0, 0);
-  //   auto physCrystal = new G4PVPlacement(nullptr, posCrystal, logicCrystal, "Crystal", logicEnv, false, 0, checkOverlaps);
-  // //set the crystal as scoring volume
-
-    //   G4double crystal_length = 24.07 * cm;
-    //   G4double crystal_h = 9.03 * cm;
-    //   auto solidCrystal = new G4Box("Crystal", crystal_length / 2, crystal_length / 2, crystal_h / 2);
-    //   auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
-    //   G4ThreeVector posCrystal = G4ThreeVector(0, 0, 0);
-    //   auto physCrystal = new G4PVPlacement(
-    //     nullptr,  // no rotation
-    //     posCrystal,  // at (0,0,0)
-    //     logicCrystal,  // its logical volume
-    //     "Crystal",  // its name
-    //     logicEnv,  // its mother volume
-    //     false,  // no boolean operation
-    //     0,  // copy number
-    //     checkOverlaps  // overlaps checking
-    //   );
-    // fScoringVolume = logicCrystal;
       G4double Crystal_gap = 0.01 * cm;
       G4int Crystal_nx = 8;
       G4int Crystal_ny = 1;
@@ -193,14 +166,32 @@ namespace B1
       G4Box* solidSiPM = new G4Box("SiPM", sipm_l / 2, sipm_l / 2, sipm_l / 2);
       G4LogicalVolume* logicSiPM = new G4LogicalVolume(solidSiPM, SiPM_mat, "SiPM");
       
+      std::vector<G4double> energy = {2.0*eV, 3.5*eV};
+      std::vector<G4double> rindex_sipm = {1.5, 1.5};  // 硅的折射率 ~1.5
 
+      auto sipm_mt = new G4MaterialPropertiesTable();
+      sipm_mt->AddProperty("RINDEX", energy, rindex_sipm);
+      SiPM_mat->SetMaterialPropertiesTable(sipm_mt);
+
+       // 1) 皮肤光学表面，只创建一次
+
+      G4OpticalSurface* SiPM_Surf = new G4OpticalSurface("SiPMSkinSurface");
+      SiPM_Surf->SetType(dielectric_dielectric);
+      SiPM_Surf->SetModel(unified);
+      SiPM_Surf->SetFinish(polished);
+
+      // 2) 贴到整个 logicSiPM 上
+      new G4LogicalSkinSurface("SiPMSkinSurface",logicSiPM,SiPM_Surf);
+
+
+      
       // Position SiPM on the crystal
       for (int iz = 0;iz < SiPm_nz ; ++iz)
         {
           for (int ix = 0 ;ix < SiPm_nx; ++ix)
           {
             G4double PosX = -Crystal_x/2 + ix * sipm_l;
-            G4double PosY = Crystal_y/2 + sipm_l/2 + 0.001 * cm;
+            G4double PosY = Crystal_y/2 + sipm_l/2 ;
             G4double PosZ = -Crystal_z/2 + iz * sipm_l;
 
             G4ThreeVector SiPm_Pos_Top = G4ThreeVector(PosX,PosY,PosZ);
@@ -226,14 +217,9 @@ namespace B1
               iz*100000+ix*10+2,
               checkOverlaps
             );
-            
-          } 
+          }
         }
-      flogicSiPM = logicSiPM; // Store SiPM logical volume
-
-
-      
-
+      flogicSiPM = logicSiPM;
     return physWorld;
   }
 }

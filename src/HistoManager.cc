@@ -81,7 +81,7 @@ void HistoManager::Book()
     analysisManager->CreateH1("LAbs", "trackL in absorber (mm)", 100, 0., 1 * m);
     analysisManager->CreateH1("LGap", "trackL in gap (mm)", 100, 0., 50 * cm);
     analysisManager->CreateH1("PhotonCounts", "Number of optical photons in PMT", 200, 0, 2000);
-
+    analysisManager->CreateH1("PhotonDepth","Depth index of captured photons", 20, -0.5, 19.5);
     // Create Ntuples
     analysisManager->CreateNtuple("Ntuple1", "Edep");
     analysisManager->CreateNtupleDColumn("Eabs");  // column Id = 0
@@ -99,6 +99,12 @@ void HistoManager::Book()
 
     analysisManager->CreateNtuple("PhotonGenerated", "GeneratedCounts");
     analysisManager->CreateNtupleIColumn("GeneratedCounts");
+    analysisManager->FinishNtuple();
+
+    // 假设最深 20 层够用；如果想用实际层数，可在 DetectorConstruction 构造好后把层数传进来
+
+    analysisManager->CreateNtuple("PhotonDepthNtuple", "Depth index of each captured photon");
+    analysisManager->CreateNtupleIColumn("DepthIndex");
     analysisManager->FinishNtuple();
 
     fFactoryOn = true;
@@ -227,6 +233,13 @@ void HistoManager::PrintStatistic()
     G4cout << name << ": mean = " << G4BestUnit(h1->mean(), unitCategory)
            << " rms = " << G4BestUnit(h1->rms(), unitCategory) << G4endl;
   }
+}
+
+void HistoManager::FillPhotonDepth(G4int depthIdx)
+{
+    G4AnalysisManager::Instance()->FillH1(5, depthIdx);   // 5 是上面那条 H1 的序号
+    G4AnalysisManager::Instance()->FillNtupleIColumn(4,0,depthIdx); // 4 是新 ntuple
+    G4AnalysisManager::Instance()->AddNtupleRow(4);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

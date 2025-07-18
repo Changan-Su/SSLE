@@ -1,0 +1,10 @@
+^D:\GEANT4\PROJECTS\SSLE\BUILD\CMAKEFILES\535ADA1D7D0A5F26CAFD06FD00129A05\GENERATE.STAMP.RULE
+setlocal
+D:\Cmake\bin\cmake.exe -SD:/Geant4/Projects/SSLE -BD:/Geant4/Projects/SSLE/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Geant4/Projects/SSLE/build/B1.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

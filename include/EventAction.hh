@@ -29,6 +29,7 @@
 
 #ifndef B1EventAction_h
 #define B1EventAction_h 1
+// #pragma message(">>> CORRECT EventAction.hh is: " __FILE__)
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"
@@ -58,18 +59,22 @@ class EventAction : public G4UserEventAction
 
 
     void AddEdep(G4double edep) { fEdep += edep; }
+    void AddPhotonDepth(G4int depth) {fHistoManager->FillPhotonDepth(depth);} 
     void AddAbsorption(G4double edep, G4double trackL) {
       fEnergyAbs += edep;
       fTrackLAbs += trackL;
       }
     void AddPhotonInDetector(G4int count) { fPhotonCountDetector += count ;} // 统计进入探测器的光子数量
     void AddPhotonInPMT(G4int count) { fPhotonCountPMT += count ;} // 统计进入 PMT 的光子数量
+
+
     G4int GetPhotonCountDetector() const { return fPhotonCountDetector; }// 获取进入探测器的光子数量
     G4int GetPhotonCountPMT() const { return fPhotonCountPMT; }// 获取进入 PMT 的光子数量
     
     void AddPhotonGenerated(G4int n = 1) { fPhotonCountGenerated += n; }// 统计生成的光子数量
     G4int GetPhotonGenerated() const { return fPhotonCountGenerated; }// 获取生成的光子数量
-  private:
+
+    private:
     RunAction* fRunAction = nullptr;
     G4double fEdep = 0.;
     G4double fEnergyAbs = 0.;
@@ -83,6 +88,9 @@ class EventAction : public G4UserEventAction
 
     HistoManager* fHistoManager = nullptr;
 };
+
+
+
 
 }  // namespace B1
 

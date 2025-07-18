@@ -59,6 +59,7 @@ class HistoManager
     void FillPhotonHisto(G4int photonCounts);
     void FillPhotonNtuple(G4int photonCounts);
     void FillPhotonGeneratedNtuple(G4int photonGenerated);
+    void FillPhotonDepth(G4int depthIdx);
 
 
   private:

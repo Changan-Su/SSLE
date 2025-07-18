@@ -32,6 +32,7 @@
 #include "DetectorConstruction.hh"
 #include "EventAction.hh"
 
+
 #include "G4Event.hh"
 #pragma message ("!!! Using EventAction.hh from: " __FILE__)
 #include "G4LogicalVolume.hh"
@@ -67,8 +68,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     G4LogicalVolume* volume =
         step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
     G4String volName = volume->GetName();
-    if (volName.contains("PMT")) {
-        fEventAction->AddPhotonInPMT(1);
+    // G4cout << "[DEBUG] Optical photon at volume: " << volName << G4endl;
+    if (volName.contains("SiPM")) {
+        G4int copyNo_SiPM = step->GetPreStepPoint()
+                                ->GetTouchableHandle()->GetCopyNumber();
+        G4int DOI_iz = copyNo_SiPM / 100000;
+        fEventAction->AddPhotonDepth(DOI_iz);
+        fEventAction->AddPhotonInPMT(1);//Photons Counts
+        G4cout<< "Debug:DOI" << DOI_iz << G4endl;
         track->SetTrackStatus(fStopAndKill);  // 防止重复计数
     }
     return;

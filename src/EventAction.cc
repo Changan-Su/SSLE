@@ -89,17 +89,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt)
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
-//   // accumulate statistics in run action
-//   fRunAction->AddEdep(fEdep);
-//   fRunAction->FillPerEvent(fEnergyAbs /MeV,  fTrackLAbs /mm);
-//   // fill histograms
-//   //
-//   fHistoManager->FillHisto(0, fEnergyAbs);
-//   fHistoManager->FillHisto(1, fTrackLAbs);
 
-//  // fill ntuple
-//   //
-  // fHistoManager->FillNtuple(fEnergyAbs, fTrackLAbs);
     G4double edepToRecord = fEdep;
   
     if (fApplySmearing && fEdep > 0.) {
@@ -121,6 +111,9 @@ void EventAction::EndOfEventAction(const G4Event*)
     fHistoManager->FillPhotonHisto(photonToRecord); 
     fHistoManager->FillPhotonNtuple(fPhotonCountPMT);
     fHistoManager->FillPhotonGeneratedNtuple(fPhotonCountGenerated);
-}
+    G4cout << "Event photonCountPMT = " << fPhotonCountPMT << G4endl;
+
+  }
+
 
 }  // namespace B1
