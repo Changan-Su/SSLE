@@ -53,22 +53,22 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
     G4LogicalVolume* GetPMTVolume() const { return fPMTVolume; }  // Getter for PMT logical volume
 
-    G4int GetCrystal_n() const { return fCrystal_n; }
-    G4double GetCrystal_l() const { return fCrystal_l; }
-    G4int GetCrystal_nh() const { return fCrystal_nh; }
-    G4double GetCrystal_h() const { return fCrystal_h; }
-    G4double GetCrystal_gap() const { return fCrystal_gap; }
-
+    G4int GetCrystal_gap() const { return fCrystal_gap; } // Getter for crystal gap
+    G4int GetCrystal_nx() const { return fCrystal_nx; } // Getter for number of crystals in one dimension
+    G4int GetCrystal_ny() const { return fCrystal_ny; } // Getter for number of crystals in the other dimension
+    G4int GetCrystal_nz() const { return fCrystal_nz; } // Getter for number of crystals in height
+    G4double Getcrystal_l() const { return fcrystal_l; } // Getter for crystal length
   protected:
     G4LogicalVolume* fScoringVolume = nullptr;
     G4LogicalVolume* fPMTVolume = nullptr;  // PMT logical volume for optical photon tracking
 
   private:
-  G4int fCrystal_n ;// Number of crystals in one dimension
-  G4double fCrystal_l;// Length of the crystal
-  G4int fCrystal_nh; // Number of crystals in the other dimension (height)
-  G4double fCrystal_h; // Height of the crystal
-  G4double fCrystal_gap; // Gap between crystals
+    G4int fCrystal_gap ; // Gap between crystals
+    G4int fCrystal_nx; // Number of crystals in one dimension
+    G4int fCrystal_ny; // Number of crystals in the other dimension
+    G4int fCrystal_nz; // Number of crystals in height
+    G4double fcrystal_l; // Length of the crystal
+
 
   };
 

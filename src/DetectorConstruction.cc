@@ -140,30 +140,31 @@ namespace B1
     //     checkOverlaps  // overlaps checking
     //   );
     // fScoringVolume = logicCrystal;
-
-      G4double Crystal_l = 24.07 * cm;
-      G4double Crystal_h = 9.03 * cm;
       G4double Crystal_gap = 0.01 * cm;
-      G4int Crystal_n = 8;
-      G4int Crystal_nh = 3;
-      G4double crystal_l = Crystal_l / Crystal_n - Crystal_gap;
-      G4double crystal_h = Crystal_h / Crystal_nh - Crystal_gap;
+      G4int Crystal_nx = 8;
+      G4int Crystal_ny = 1;
+      G4int Crystal_nz = 1;
+      G4double crystal_l = 3 * cm; // 单个晶体的边长
+      G4double Crystal_x = crystal_l * Crystal_nx + Crystal_gap * (Crystal_nx - 1);
+      G4double Crystal_y = crystal_l * Crystal_ny + Crystal_gap * (Crystal_ny - 1);
+      G4double Crystal_z = crystal_l * Crystal_nz + Crystal_gap * (Crystal_nz - 1);
+  
 
-      auto solidCrystal = new G4Box("Crystal", crystal_l / 2, crystal_l / 2, crystal_h / 2);
+      auto solidCrystal = new G4Box("Crystal", crystal_l / 2, crystal_l / 2, crystal_l / 2);
       auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
-      for (int iz = 0; iz < Crystal_nh; ++iz)
+      for (int iz = 0; iz < Crystal_nz; ++iz)
       {
 
-        for (int ix = 0; ix < Crystal_n; ++ix)
+        for (int ix = 0; ix < Crystal_nx; ++ix)
         {
-          for (int iy = 0; iy < Crystal_n; ++iy)
+          for (int iy = 0; iy < Crystal_ny; ++iy)
           {
-            G4double posX = -Crystal_l/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
-            G4double posY = -Crystal_l/2 + iy * (crystal_l + Crystal_gap) + crystal_l / 2;
-            G4double posZ = -Crystal_h/2 + iz * (crystal_h + Crystal_gap) + crystal_h / 2;
+            G4double posX = (-crystal_l * Crystal_nx + Crystal_gap * (Crystal_nx - 1))/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
+            G4double posY = -Crystal_y/2 + iy * (crystal_l + Crystal_gap) + crystal_l / 2;
+            G4double posZ = -Crystal_z/2 + iz * (crystal_l + Crystal_gap) + crystal_l / 2;
 
             G4ThreeVector pos_crystal = G4ThreeVector(posX, posY, posZ);
-            G4int copyNo = iz * Crystal_n * Crystal_nh + ix * Crystal_nh + iy;
+            G4int copyNo = iz * Crystal_nz * Crystal_ny + ix * Crystal_ny + iy;
             auto physCrystal = new G4PVPlacement(nullptr,  // no rotation
                                                   pos_crystal,  // position
                                                   logicCrystal,  // its logical volume
@@ -177,11 +178,11 @@ namespace B1
       }
 
       fScoringVolume = logicCrystal;
-      fCrystal_n = Crystal_n; // Store the number of crystals in one dimension
-      fCrystal_l = Crystal_l; // Store the length of the crystal
-      fCrystal_h = Crystal_h; // Store the height of the crystal
-      fCrystal_gap = Crystal_gap; // Store the gap between crystals
-      fCrystal_nh = Crystal_nh; // Store the number of crystals in height
+      fCrystal_gap = Crystal_gap; // Store crystal gap
+      fCrystal_nx = Crystal_nx; // Store number of crystals in one dimension
+      fCrystal_ny = Crystal_ny; // Store number of crystals in the other dimension
+      fCrystal_nz = Crystal_nz; // Store number of crystals in height
+      fcrystal_l = crystal_l; // Store crystal length
 
 
 
