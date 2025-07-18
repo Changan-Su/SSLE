@@ -145,6 +145,7 @@ namespace B1
       G4int Crystal_ny = 1;
       G4int Crystal_nz = 1;
       G4double crystal_l = 3 * cm; // 单个晶体的边长
+
       G4double Crystal_x = crystal_l * Crystal_nx + Crystal_gap * (Crystal_nx - 1);
       G4double Crystal_y = crystal_l * Crystal_ny + Crystal_gap * (Crystal_ny - 1);
       G4double Crystal_z = crystal_l * Crystal_nz + Crystal_gap * (Crystal_nz - 1);
@@ -184,102 +185,54 @@ namespace B1
       fCrystal_nz = Crystal_nz; // Store number of crystals in height
       fcrystal_l = crystal_l; // Store crystal length
 
+      //SiPM Detector
+      G4Material* SiPM_mat = nist->FindOrBuildMaterial("G4_SILICON_DIOXIDE");
+      G4double sipm_l = 0.3 * cm; // SiPM size
+      G4int SiPm_nz = Crystal_z / sipm_l ;//注意Gap
+      G4int SiPm_nx = Crystal_x / sipm_l ;
+      G4Box* solidSiPM = new G4Box("SiPM", sipm_l / 2, sipm_l / 2, sipm_l / 2);
+      G4LogicalVolume* logicSiPM = new G4LogicalVolume(solidSiPM, SiPM_mat, "SiPM");
+      
+
+      // Position SiPM on the crystal
+      for (int iz = 0;iz < SiPm_nz ; ++iz)
+        {
+          for (int ix = 0 ;ix < SiPm_nx; ++ix)
+          {
+            G4double PosX = -Crystal_x/2 + ix * sipm_l;
+            G4double PosY = Crystal_y/2 + sipm_l/2 + 0.001 * cm;
+            G4double PosZ = -Crystal_z/2 + iz * sipm_l;
+
+            G4ThreeVector SiPm_Pos_Top = G4ThreeVector(PosX,PosY,PosZ);
+            G4ThreeVector SiPm_Pos_Bottom = G4ThreeVector(PosX,-PosY,PosZ);
+
+            new G4PVPlacement(
+              nullptr,
+              SiPm_Pos_Top,
+              logicSiPM,
+              "SiPM_Top",
+              logicEnv,
+              false,
+              iz*100000+ix*10+1,
+              checkOverlaps
+            );
+            new G4PVPlacement(
+              nullptr,
+              SiPm_Pos_Bottom,
+              logicSiPM,
+              "SiPM_Bottom",
+              logicEnv,
+              false,
+              iz*100000+ix*10+2,
+              checkOverlaps
+            );
+            
+          } 
+        }
+      flogicSiPM = logicSiPM; // Store SiPM logical volume
 
 
-    // --- 定义 PMT 材料 ---
-    G4Material* pmt_mat = nist->FindOrBuildMaterial("G4_GLASS_PLATE");
-
-    // --- 先定义属性数组 ---
-    G4double energy[2] = {2.0 * eV, 3.5 * eV};          // Photon energy range
-    G4double rindex_pmt[2] = {1.52, 1.52};              // PMT glass refractive index
-    G4double efficiency[2] = {0.9, 0.9};              // Quantum efficiency 25%
-
-    // --- 定义材质属性表 ---
-    G4MaterialPropertiesTable* pmt_mpt = new G4MaterialPropertiesTable();
-    pmt_mpt->AddProperty("RINDEX", energy, rindex_pmt, 2);
-    pmt_mpt->AddProperty("EFFICIENCY", energy, efficiency, 2);
-
-    // --- 材料挂属性表
-    pmt_mat->SetMaterialPropertiesTable(pmt_mpt);
-
-    // G4double mptTheckness = 3 * mm ;
-    // G4Tubs* solidPMT = new G4Tubs("PMT", 0., crystal_rmax, mptTheckness/2, crystal_phimin, crystal_phimax);
-    // auto logicPMT = new G4LogicalVolume(solidPMT, pmt_mat, "PMT");
-    // fPMTVolume = logicPMT;  // Store PMT logical volume for optical photon tracking
-    // auto physPMT = new G4PVPlacement(nullptr,
-    //                   G4ThreeVector(0, 0, crystal_hz/2 + mptTheckness / 2),  // Position PMT above the crystal
-    //                   logicPMT,  // its logical volume
-    //                   "PMT",  // its name
-    //                   logicEnv,  // its mother volume
-    //                   false,  // no boolean operation
-    //                   0,  // copy number
-    //                   checkOverlaps);  // overlaps checking
-    // auto opticalSurface = new G4OpticalSurface("CrystalToPMTSurface");
-    // opticalSurface->SetType(dielectric_dielectric); // 介质-介质
-    // opticalSurface->SetModel(unified);
-    // // opticalSurface->SetFinish(polished); // 镜面反射，抛光面
-    // // opticalSurface->SetFinish(polishedfrontpainted);
-    // opticalSurface->SetFinish(groundfrontpainted);
-    // opticalSurface->SetSigmaAlpha(0.1); // 表面粗糙度
-    
-    // fPhysCrystal = physCrystal;
-    // fPhysPMT = physPMT;
-
-    // new G4LogicalBorderSurface("CrystalToPMT",
-    // fPhysCrystal,    // 晶体的物理体
-    // fPhysPMT,        // PMT的物理体
-    // opticalSurface  // 光学表面
-    // );
-    
- 
-// // Reflector Solid
-// G4double reflectorThickness = 0.1 * mm;
-// auto solidOuter = new G4Tubs("Outer",
-//     0.,
-//     crystal_rmax + reflectorThickness,
-//     (crystal_hz/2 + reflectorThickness),
-//     0.*deg, 360.*deg);
-
-// auto solidInner = new G4Tubs("Inner",
-//     0.,
-//     crystal_rmax,
-//     (crystal_hz/2),
-//     0.*deg, 360.*deg);
-
-// auto solidReflector = new G4SubtractionSolid("Reflector", solidOuter, solidInner);
-
-// // Reflector Material
-// G4Material* PTFE = nist->FindOrBuildMaterial("G4_TEFLON");// 聚四氟乙烯 (PTFE) 材料
-// G4LogicalVolume* logicReflector = new G4LogicalVolume(solidReflector, PTFE, "Reflector");
-
-// // 放置 Reflector
-// auto physReflector = new G4PVPlacement(
-//     nullptr,
-//     G4ThreeVector(0, 0, 0), // 中心和晶体对齐
-//     logicReflector,
-//     "Reflector",
-//     logicEnv,
-//     false,
-//     0,
-//     checkOverlaps);
-
-// // Reflector Optical Surface
-// G4OpticalSurface* reflectorSurface = new G4OpticalSurface("ReflectorSurface");
-// reflectorSurface->SetType(dielectric_metal);
-// reflectorSurface->SetFinish(groundfrontpainted);
-// reflectorSurface->SetModel(unified);
-
-// // Reflector Surface Properties
-// G4MaterialPropertiesTable* mptReflector = new G4MaterialPropertiesTable();
-// G4double ephoton[2] = {2.0 * eV, 3.5 * eV};
-// G4double reflectivity[2] = {0.98, 0.98};
-// G4double r_efficiency[2] = {0.0, 0.0};
-
-// mptReflector->AddProperty("REFLECTIVITY", ephoton, reflectivity, 2);
-// mptReflector->AddProperty("EFFICIENCY", ephoton, r_efficiency, 2);
-// reflectorSurface->SetMaterialPropertiesTable(mptReflector);
-
-// new G4LogicalSkinSurface("ReflectorSkin", logicReflector, reflectorSurface);
+      
 
     return physWorld;
   }

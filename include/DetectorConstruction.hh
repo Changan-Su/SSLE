@@ -48,10 +48,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4VPhysicalVolume* Construct() override;
     G4VPhysicalVolume* fPhysCrystal = nullptr;  // Physical volume for the crystal
-    G4VPhysicalVolume* fPhysPMT = nullptr;      // Physical volume for the PMT
+    G4VPhysicalVolume* fLogicSiPM = nullptr;      // Physical volume for the PMT
 
     G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
-    G4LogicalVolume* GetPMTVolume() const { return fPMTVolume; }  // Getter for PMT logical volume
+    G4LogicalVolume* GetlogicSiPM() const { return flogicSiPM; }  // Getter for PMT logical volume
 
     G4int GetCrystal_gap() const { return fCrystal_gap; } // Getter for crystal gap
     G4int GetCrystal_nx() const { return fCrystal_nx; } // Getter for number of crystals in one dimension
@@ -60,7 +60,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double Getcrystal_l() const { return fcrystal_l; } // Getter for crystal length
   protected:
     G4LogicalVolume* fScoringVolume = nullptr;
-    G4LogicalVolume* fPMTVolume = nullptr;  // PMT logical volume for optical photon tracking
+    G4LogicalVolume* flogicSiPM = nullptr;  // PMT logical volume for optical photon tracking
 
   private:
     G4int fCrystal_gap ; // Gap between crystals

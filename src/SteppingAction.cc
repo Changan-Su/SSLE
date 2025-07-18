@@ -49,11 +49,11 @@ SteppingAction::SteppingAction(EventAction* eventAction) : fEventAction(eventAct
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
-  if (!fScoringVolume || !fPMTVolume) {
+  if (!fScoringVolume || !flogicSiPM) {
     const auto detConstruction = static_cast<const DetectorConstruction*>(
         G4RunManager::GetRunManager()->GetUserDetectorConstruction());
     fScoringVolume = detConstruction->GetScoringVolume();
-    fPMTVolume    = detConstruction->GetPMTVolume();
+    flogicSiPM = detConstruction->GetlogicSiPM();
   }
 
   G4Track* track = step->GetTrack();

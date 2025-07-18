@@ -66,10 +66,31 @@
 /vis/modeling/trajectories/create/drawByParticleID
 /vis/modeling/trajectories/drawByParticleID-0/set opticalphoton yellow
 /vis/scene/notifyHandlers scene-0
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 0
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 1
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 2
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 3
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 4
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
+/vis/set/touchable World 0 Envelope 0 Unit_crystal 5
+/vis/touchable/set/visibility false
+/vis/viewer/refresh
+/vis/scene/notifyHandlers
 /run/beamOn 10
 /vis/scene/notifyHandlers scene-0
-/analysis/h1/getVector
-/analysis/h2/getVector
-/run/beamOn 100
 /analysis/h1/getVector
 /analysis/h2/getVector

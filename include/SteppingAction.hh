@@ -54,7 +54,7 @@ class SteppingAction : public G4UserSteppingAction
   private:
     EventAction* fEventAction = nullptr;
     G4LogicalVolume* fScoringVolume = nullptr;
-    G4LogicalVolume* fPMTVolume = nullptr;  // PMT logical volume for optical photon tracking
+    G4LogicalVolume* flogicSiPM = nullptr;  // PMT logical volume for optical photon tracking
     G4LogicalVolume* fGapVolume     = nullptr;   // NEW ── 晶体-PMT 间隙
 };
 
