@@ -75,7 +75,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         G4int DOI_iz = copyNo_SiPM / 100000;
         fEventAction->AddPhotonDepth(DOI_iz);
         fEventAction->AddPhotonInPMT(1);//Photons Counts
-        G4cout<< "Debug:DOI" << DOI_iz << G4endl;
+        // G4cout<< "Debug:DOI" << DOI_iz << G4endl;
         track->SetTrackStatus(fStopAndKill);  // 防止重复计数
     }
     return;

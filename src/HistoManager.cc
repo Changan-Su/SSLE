@@ -103,15 +103,29 @@ void HistoManager::Book()
 
     // 假设最深 20 层够用；如果想用实际层数，可在 DetectorConstruction 构造好后把层数传进来
 
-    analysisManager->CreateNtuple("PhotonDepthNtuple", "Depth index of each captured photon");
+    fDepthNtupleId = analysisManager->CreateNtuple("PhotonDepthNtuple", "Depth index of each captured photon");
     analysisManager->CreateNtupleIColumn("DepthIndex");
     analysisManager->FinishNtuple();
+    // analysisManager->FillNtupleIColumn(4, 0, -999);
+    analysisManager->AddNtupleRow(4);
+
+
+    // G4cout << "[DEBUG] PhotonDepthNtuple index is: " 
+    //    << analysisManager->GetNtuple("PhotonDepthNtuple")->GetId() 
+    //    << G4endl;
+
 
     fFactoryOn = true;
   }
 
   G4cout << "\n----> Output file is open in " << analysisManager->GetFileName() << "."
          << analysisManager->GetFileType() << G4endl;
+
+
+
+  // G4cout << "PhotonDepthNtuple rows: " 
+  //      << G4AnalysisManager::Instance()->GetNtuple(4)->GetNtupleRowCount()
+  //      << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -236,10 +250,17 @@ void HistoManager::PrintStatistic()
 }
 
 void HistoManager::FillPhotonDepth(G4int depthIdx)
-{
-    G4AnalysisManager::Instance()->FillH1(5, depthIdx);   // 5 是上面那条 H1 的序号
-    G4AnalysisManager::Instance()->FillNtupleIColumn(4,0,depthIdx); // 4 是新 ntuple
-    G4AnalysisManager::Instance()->AddNtupleRow(4);
+{   
+    // auto* analysisManager = G4AnalysisManager::Instance();
+
+    // // 加一句 debug 看是不是 depthIdx 就是 0
+    // G4cout << "[DEBUG] Writing DOI_iz to ntuple: " << depthIdx << G4endl;
+    // G4AnalysisManager::Instance()->FillH1(5, depthIdx);   // 5 是上面那条 H1 的序号
+    // G4AnalysisManager::Instance()->FillNtupleIColumn(4,0,depthIdx); // 4 是新 ntuple
+    // G4AnalysisManager::Instance()->AddNtupleRow(4);
+    auto* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleIColumn(fDepthNtupleId, 0, depthIdx);  // 填写 depth
+    analysisManager->AddNtupleRow(fDepthNtupleId);                    // 添加到 ntuple       
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

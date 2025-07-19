@@ -99,6 +99,14 @@ void EventAction::EndOfEventAction(const G4Event*)
         edepToRecord = CLHEP::RandGaussQ::shoot(fEdep, sigma);
     }
 
+
+    for (auto d : fPhotonDOIs) 
+    {
+    fHistoManager->FillPhotonDepth(d);
+    }
+    fPhotonDOIs.clear();
+
+
     fRunAction->AddEdep(fEdep);
     fRunAction->FillPerEvent(fEnergyAbs /MeV, fTrackLAbs /mm);
 
@@ -111,7 +119,6 @@ void EventAction::EndOfEventAction(const G4Event*)
     fHistoManager->FillPhotonHisto(photonToRecord); 
     fHistoManager->FillPhotonNtuple(fPhotonCountPMT);
     fHistoManager->FillPhotonGeneratedNtuple(fPhotonCountGenerated);
-    G4cout << "Event photonCountPMT = " << fPhotonCountPMT << G4endl;
 
   }
 

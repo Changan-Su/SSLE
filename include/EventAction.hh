@@ -59,7 +59,10 @@ class EventAction : public G4UserEventAction
 
 
     void AddEdep(G4double edep) { fEdep += edep; }
-    void AddPhotonDepth(G4int depth) {fHistoManager->FillPhotonDepth(depth);} 
+    // void AddPhotonDepth(G4int depth) {fHistoManager->FillPhotonDepth(depth);} 
+    std::vector<G4int> fPhotonDOIs;  // 所有光子对应的 depth
+    void AddPhotonDepth(G4int depth) { fPhotonDOIs.push_back(depth); }  
+
     void AddAbsorption(G4double edep, G4double trackL) {
       fEnergyAbs += edep;
       fTrackLAbs += trackL;

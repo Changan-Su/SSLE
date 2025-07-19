@@ -64,6 +64,8 @@ class HistoManager
 
   private:
     G4bool fFactoryOn = false;
+    G4int fDepthNtupleId = -1;  // Add this to your HistoManager class
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

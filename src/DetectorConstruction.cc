@@ -204,8 +204,7 @@ namespace B1
               "SiPM_Top",
               logicEnv,
               false,
-              iz*100000+ix*10+1,
-              checkOverlaps
+              iz*100000+ix*10+1
             );
             new G4PVPlacement(
               nullptr,
@@ -214,8 +213,7 @@ namespace B1
               "SiPM_Bottom",
               logicEnv,
               false,
-              iz*100000+ix*10+2,
-              checkOverlaps
+              iz*100000+ix*10+2
             );
           }
         }
