@@ -78,7 +78,17 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         // G4cout<< "Debug:DOI" << DOI_iz << G4endl;
         track->SetTrackStatus(fStopAndKill);  // 防止重复计数
     }
-    return;
+    // G4ThreeVector pos = track->GetPosition();
+    // // 你可以根据晶体阵列的实际大小设置阈值，比如 ±Crystal_x/2 ±1cm 边界
+    // G4double maxX = fDetectorConstruction->GetCrystal_x()/2 + 0.1 * fDetectorConstruction->Getcrystal_l();
+    // G4double maxY = fDetectorConstruction->GetCrystal_y()/2;
+    // G4double maxZ = fDetectorConstruction->GetCrystal_z()/2;
+
+    // if (std::abs(pos.x()) > maxX ||
+    //     std::abs(pos.y()) > maxY ||
+    //     std::abs(pos.z()) > maxZ) {
+    //     track->SetTrackStatus(fStopAndKill);  // 超出范围直接杀
+    // }
 }
 
   G4double edepStep   = step->GetTotalEnergyDeposit();

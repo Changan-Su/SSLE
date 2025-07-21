@@ -31,6 +31,7 @@
 #define B1SteppingAction_h 1
 
 #include "G4UserSteppingAction.hh"
+#include "DetectorConstruction.hh"
 
 class G4LogicalVolume;
 class G4Step;
@@ -47,6 +48,7 @@ class SteppingAction : public G4UserSteppingAction
   public:
     SteppingAction(EventAction* eventAction);
     ~SteppingAction() override = default;
+    SteppingAction(const DetectorConstruction* det);
 
     // method from the base class
     void UserSteppingAction(const G4Step*) override;
@@ -56,6 +58,7 @@ class SteppingAction : public G4UserSteppingAction
     G4LogicalVolume* fScoringVolume = nullptr;
     G4LogicalVolume* flogicSiPM = nullptr;  // PMT logical volume for optical photon tracking
     G4LogicalVolume* fGapVolume     = nullptr;   // NEW ── 晶体-PMT 间隙
+    const DetectorConstruction* fDetectorConstruction ;
 };
 
 }  // namespace B1

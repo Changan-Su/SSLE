@@ -97,12 +97,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   }
 
   G4double rx = fDetectorConstruction->GetCrystal_nx() * fDetectorConstruction->Getcrystal_l() + fDetectorConstruction->GetCrystal_gap() * (fDetectorConstruction->GetCrystal_nx() - 1); // Get the crystal length from DetectorConstruction
-  G4double ry = fDetectorConstruction->GetCrystal_ny() * fDetectorConstruction->Getcrystal_l() + fDetectorConstruction->GetCrystal_gap() * (fDetectorConstruction->GetCrystal_ny() - 1); // Assuming square cross-section for simplicity
+  G4double ry = fDetectorConstruction->GetCrystal_ny() * fDetectorConstruction->Getcrystal_ly() + fDetectorConstruction->GetCrystal_gap() * (fDetectorConstruction->GetCrystal_ny() - 1); // Assuming square cross-section for simplicity
   // G4double rx = 24.7 * cm; 
   // G4double ry = 24.7 * cm;
   G4double size = 1;
-  G4double x0 = -rx/2 + size * G4UniformRand() * (rx);
-  G4double y0 = -ry/2 + size * G4UniformRand() * (ry);
+  G4double x0 = -rx/2 + G4RandFlat::shootInt(fDetectorConstruction->GetCrystal_nx())*(fDetectorConstruction->Getcrystal_l()+fDetectorConstruction->GetCrystal_gap())+fDetectorConstruction->Getcrystal_l()/2;
+  G4double y0 = -ry/2 + G4RandFlat::shootInt(fDetectorConstruction->GetCrystal_ny())*(fDetectorConstruction->Getcrystal_ly()+fDetectorConstruction->GetCrystal_gap())+fDetectorConstruction->Getcrystal_ly()/2;
   G4double z0 = -20 * cm;
 
   fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
