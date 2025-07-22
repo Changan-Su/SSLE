@@ -74,6 +74,9 @@ void EventAction::BeginOfEventAction(const G4Event* evt)
   fPhotonCountDetector = 0;
   fPhotonCountPMT = 0;
   fPhotonCountGenerated = 0;
+  fPhotonCountLeft = 0;
+  fPhotonCountRight = 0;
+
 
   G4int evtNb = evt->GetEventID();
   if (evtNb % fPrintModulo == 0) {
@@ -119,6 +122,8 @@ void EventAction::EndOfEventAction(const G4Event*)
     fHistoManager->FillPhotonHisto(photonToRecord); 
     fHistoManager->FillPhotonNtuple(fPhotonCountPMT);
     fHistoManager->FillPhotonGeneratedNtuple(fPhotonCountGenerated);
+    fHistoManager->FillPhotonLeft(fPhotonCountLeft);
+    fHistoManager->FillPhotonRight(fPhotonCountRight);
 
   }
 

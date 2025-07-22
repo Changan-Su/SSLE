@@ -69,11 +69,16 @@ class EventAction : public G4UserEventAction
       }
     void AddPhotonInDetector(G4int count) { fPhotonCountDetector += count ;} // 统计进入探测器的光子数量
     void AddPhotonInPMT(G4int count) { fPhotonCountPMT += count ;} // 统计进入 PMT 的光子数量
-
+    
+    // void AddPhotonFuck(G4int count) { fPhotonCountLeft += count ;} // 统计生成的光子数量
+    G4int FuckLeft = 1;
+    void AddPhotonLeft(G4int count) { fPhotonCountLeft += count; } // 统计进入左侧探测器的光子数量
+    void AddPhotonRight(G4int count) { fPhotonCountRight += count; }
 
     G4int GetPhotonCountDetector() const { return fPhotonCountDetector; }// 获取进入探测器的光子数量
     G4int GetPhotonCountPMT() const { return fPhotonCountPMT; }// 获取进入 PMT 的光子数量
-    
+    G4int GetPhotonCountLeft() const { return fPhotonCountLeft; }// 获取进入左侧探测器的光子数量
+    G4int GetPhotonCountRight() const { return fPhotonCountRight; }// 获取进入右侧探测器的光子数量
     void AddPhotonGenerated(G4int n = 1) { fPhotonCountGenerated += n; }// 统计生成的光子数量
     G4int GetPhotonGenerated() const { return fPhotonCountGenerated; }// 获取生成的光子数量
 
@@ -87,7 +92,10 @@ class EventAction : public G4UserEventAction
     G4int fPhotonCountGenerated; 
     G4int fPhotonCountDetector = 0; // 统计进入探测器的光子数量
     G4int fPhotonCountPMT = 0; // 统计进入 PMT 的光子数量
-  
+    G4int fPhotonFuck = 0;
+    G4int fPhotonCountLeft = 0;
+    G4int fPhotonCountRight = 0;
+
 
     HistoManager* fHistoManager = nullptr;
 };

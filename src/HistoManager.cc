@@ -101,6 +101,8 @@ void HistoManager::Book()
     analysisManager->CreateNtupleIColumn("GeneratedCounts");
     analysisManager->FinishNtuple();
 
+    
+
     // 假设最深 20 层够用；如果想用实际层数，可在 DetectorConstruction 构造好后把层数传进来
 
     fDepthNtupleId = analysisManager->CreateNtuple("PhotonDepthNtuple", "Depth index of each captured photon");
@@ -113,6 +115,13 @@ void HistoManager::Book()
     // G4cout << "[DEBUG] PhotonDepthNtuple index is: " 
     //    << analysisManager->GetNtuple("PhotonDepthNtuple")->GetId() 
     //    << G4endl;
+    analysisManager->CreateNtuple("PhotonLeft", "PhotonCounts_Left");
+    analysisManager->CreateNtupleIColumn("PhotonCounts_Left");
+    analysisManager->FinishNtuple();
+
+    analysisManager->CreateNtuple("PhotonRight", "PhotonCounts_Right");
+    analysisManager->CreateNtupleIColumn("PhotonCounts_Right");
+    analysisManager->FinishNtuple();
 
 
     fFactoryOn = true;
@@ -264,3 +273,17 @@ void HistoManager::FillPhotonDepth(G4int depthIdx)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void HistoManager::FillPhotonLeft(G4int photonCounts)
+{
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleIColumn(5, 0, photonCounts); // 第5个ntuple
+    analysisManager->AddNtupleRow(5);
+}
+
+void HistoManager::FillPhotonRight(G4int photonCounts)
+{
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleIColumn(6, 0, photonCounts); // 第6个ntuple
+    analysisManager->AddNtupleRow(6);
+}
