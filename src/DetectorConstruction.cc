@@ -39,7 +39,7 @@ namespace B1
     auto env_mt = new G4MaterialPropertiesTable();
     std::vector<G4double> energy_env = {2.0 * eV, 3.5 * eV};
     std::vector<G4double> rindex_env = {1.0, 1.0};
-    // std::vector<G4double> abslen_env = {0.0, 0.0}; 
+    // std::vector<G4double> abslen_env = {1000 * cm, 1000 * cm}; 
     env_mt->AddProperty("RINDEX", energy_env, rindex_env);
     // env_mt->AddProperty("ABSLENGTH", energy_env, abslen_env);
     env_mat->SetMaterialPropertiesTable(env_mt);
@@ -105,7 +105,7 @@ namespace B1
     std::vector<G4double> nai_SCINT = {1.0, 1.0, 1.0, 1.0, 1.0}; // 保持能量范围覆盖NaI发射区间
     std::vector<G4double> nai_RIND = {1.85, 1.85, 1.85, 1.85, 1.85};
     // std::vector<G4double> nai_ABSL = {38. * cm, 38. * cm, 38. * cm, 38. * cm, 38. * cm};
-    std::vector<G4double> nai_ABSL = {100. * cm, 100. * cm, 100. * cm, 100. * cm, 100. * cm}; // 吸收长度设置为100cm
+    std::vector<G4double> nai_ABSL = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm}; // 吸收长度设置为100cm
 
     auto nai_mt = new G4MaterialPropertiesTable();
     nai_mt->AddProperty("SCINTILLATIONCOMPONENT1", nai_Energy, nai_SCINT);
@@ -122,8 +122,8 @@ namespace B1
 
     //LocCry
     
-      G4double Crystal_gap = 0.01 * cm;
-      G4int Crystal_nx = 8;
+      G4double Crystal_gap = 0.00001 * cm;
+      G4int Crystal_nx = 10;
       G4int Crystal_ny = 1;
       G4int Crystal_nz = 1;
       G4double crystal_l = 3 * cm; // 单个晶体的边长
@@ -187,9 +187,9 @@ namespace B1
           G4double posY = -Crystal_y/2 + iy * (crystal_ly + Crystal_gap) + crystal_ly / 2;
           for (int ix = 0; ix < Crystal_nx; ++ix)
           {
-            G4double posX = (-crystal_l * Crystal_nx + Crystal_gap * (Crystal_nx - 1))/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
+            G4double posX = -Crystal_x/2 + ix * (crystal_l + Crystal_gap) + crystal_l / 2;
             G4ThreeVector pos_crystal = G4ThreeVector(posX, posY, posZ);
-            G4int copyNo = iz * Crystal_nz * Crystal_ny + ix * Crystal_ny + iy;
+            G4int copyNo = 0;
             auto physCrystal = new G4PVPlacement(nullptr,  // no rotation
                                                   pos_crystal,  // position
                                                   logicCrystal,  // its logical volume
@@ -200,8 +200,8 @@ namespace B1
                                                   checkOverlaps);  // overlaps checking
           }
 
-      G4double SiPM_PosX_l = -Crystal_x/2;
-      G4double SiPM_PosX_r = Crystal_x/2;
+      G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l*sipm_l_ratio/2 - 0.1 * cm;
+      G4double SiPM_PosX_r = Crystal_x/2 + sipm_l*sipm_l_ratio/2 + 0.1 * cm;
       G4double SiPM_PosY = posY;
       G4double SiPM_PosZ = posZ;
       G4ThreeVector SiPM_Pos_l = G4ThreeVector(SiPM_PosX_l, SiPM_PosY, SiPM_PosZ);
@@ -245,13 +245,13 @@ namespace B1
       fCrystal_z = Crystal_z; // Store crystal size in z direction
 
 
-      //Crystal Optical Surface
-      G4OpticalSurface* crystalsurface = new G4OpticalSurface("CrystalSurface");
-      crystalsurface->SetType(dielectric_dielectric);
-      crystalsurface->SetModel(unified);
-      crystalsurface->SetFinish(polished);
+      // //Crystal Optical Surface
+      // G4OpticalSurface* crystalsurface = new G4OpticalSurface("CrystalSurface");
+      // crystalsurface->SetType(dielectric_dielectric);
+      // crystalsurface->SetModel(unified);
+      // crystalsurface->SetFinish(polished);
 
-      new G4LogicalSkinSurface("CrystalSurface",logicCrystal, crystalsurface);
+      // new G4LogicalSkinSurface("CrystalSurface",logicCrystal, crystalsurface);
 
 
 

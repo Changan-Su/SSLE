@@ -1,22 +1,64 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.optimize import newton
 
-# ==== 文件名 ====
-file_left = r'.\build\AnaEx01_nt_PhotonLeft.csv'
+# ==== 常数 ====
+r  = 1.5
+x2 = 24.0
+eps = 1e-6
+lambda_abs = 40.0  # 加入吸收长度
+
+# ==== 读取数据 ====
+file_left  = r'.\build\AnaEx01_nt_PhotonLeft.csv'
 file_right = r'.\build\AnaEx01_nt_PhotonRight.csv'
 
-# 跳过注释行并读取第一列数据
-L = pd.read_csv(file_left, comment='#', header=0).iloc[:, 0].astype(float).to_numpy()
-R = pd.read_csv(file_right, comment='#', header=0).iloc[:, 0].astype(float).to_numpy()
+L = pd.read_csv(file_left,  comment='#', header=0).iloc[:,0].astype(float).to_numpy()
+R = pd.read_csv(file_right, comment='#', header=0).iloc[:,0].astype(float).to_numpy()
 
-# ==== 基本处理 ====
-eps = 1e-6  # 防止除零
+# ==== 先计算 total_photons，并对 L=R=0 的行做一次过滤 ====
 total_photons = L + R
+mask0 = ~((L == 0) & (R == 0))
+L = L[mask0]
+R = R[mask0]
+total_photons = total_photons[mask0]
+
+# ==== 定义 rho，并过滤掉 R=0 或 rho 太小的行 ====
+rho_array = L / (R)
+mask1 = (R > eps) & (rho_array > eps)
+L = L[mask1]
+R = R[mask1]
+total_photons = total_photons[mask1]
+rho_array = rho_array[mask1]
+
+# ==== 待求根函数 F(x1; rho) ====
+def F(x1, rho):
+    # x1 可能被 newton 跑出界，先 clip 保证不过分发散
+    x1 = np.clip(x1, 0.0, x2)
+    exp_term = np.exp((x2 - 2*x1) / lambda_abs)
+    u = 1 - x1/np.sqrt(r**2 + x1**2)
+    v = 1 - (x2-x1)/np.sqrt(r**2 + (x2-x1)**2)
+    return exp_term*(u/v) - rho
+
+# ==== 用 Newton 逐点解 x1，失败的填 NaN ====
+x1_array = np.full_like(rho_array, np.nan, dtype=float)
+for i, rho in enumerate(rho_array):
+    # —— 这里改成新的零级近似初值 ——  
+    x0 = np.clip((x2 - np.log(rho)) / 2,
+                 1e-6, x2 - 1e-6)
+    try:
+        sol = newton(lambda x: F(x, rho),
+                     x0,
+                     tol=1e-12,
+                     maxiter=50)
+        if 0.0 <= sol <= x2:
+            x1_array[i] = sol
+    except (RuntimeError, OverflowError):
+        continue
 
 # ==== 两种 DOI 计算方式 ====
-asymmetry = (L - R) / (L + R + eps)
-log_ratio = np.log((L + eps) / (R + eps))
+asymmetry = (L - R) / (L + R )
+log_ratio = np.log((L ) / (R ))
 doi2 = L / (L+R+eps) 
 
 # ==== Asymmetry 直方图 ====
@@ -37,14 +79,25 @@ plt.title("Photon Counts vs DOI (Log Ratio)")
 plt.grid(True)
 plt.tight_layout()
 
-#doi 2
-plt.figure(figsize=(8, 5))
-plt.hist(doi2, weights=total_photons, bins=1000, color='red', alpha=0.7)
-plt.xlabel("DOI : L/(L+R)")
+# #doi 2
+# plt.figure(figsize=(8, 5))
+# plt.hist(doi2, weights=total_photons, bins=1000, color='red', alpha=0.7)
+# plt.xlabel("DOI : L/(L+R)")
+# plt.ylabel("Total Photon Counts")
+# plt.title("Photon Counts vs DOI (L/L+R)")
+# plt.grid(True)
+# plt.tight_layout()
+
+# ==== 绘图：Photon Counts vs x1 ====
+plt.figure(figsize=(8,5))
+plt.hist(x1_array[~np.isnan(x1_array)],
+         weights=total_photons[~np.isnan(x1_array)],
+         bins=1000,
+         color='purple',
+         alpha=0.7)
+plt.xlabel("x₁ (inverted from ρ = L/R)")
 plt.ylabel("Total Photon Counts")
-plt.title("Photon Counts vs DOI (L/L+R)")
+plt.title("Photon Counts vs x₁")
 plt.grid(True)
 plt.tight_layout()
-
-# ==== 显示图像 ====
 plt.show()
