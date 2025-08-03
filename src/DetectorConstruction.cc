@@ -93,41 +93,74 @@ namespace B1
                       checkOverlaps);  // overlaps checking
 //=========================================================================================
 
-    G4Element* elNa = G4NistManager::Instance()->FindOrBuildElement("Na");
-    G4Element* elI  = G4NistManager::Instance()->FindOrBuildElement("I");
-    G4double density = 3.67 * g/cm3;
-    G4Material* NaI_Tl = new G4Material("NaI_Tl", density, 2);
-    NaI_Tl->AddElement(elNa, 1);
-    NaI_Tl->AddElement(elI, 1);
+    // G4Element* elNa = G4NistManager::Instance()->FindOrBuildElement("Na");
+    // G4Element* elI  = G4NistManager::Instance()->FindOrBuildElement("I");
+    // G4double density = 3.67 * g/cm3;
+    // G4Material* NaI_Tl = new G4Material("NaI_Tl", density, 2);
+    // NaI_Tl->AddElement(elNa, 1);
+    // NaI_Tl->AddElement(elI, 1);
 
-    // 材料属性表用LXe风格
-    std::vector<G4double> nai_Energy = {2.07 * eV, 2.34 * eV, 2.62 * eV, 2.89 * eV, 3.10 * eV};
-    std::vector<G4double> nai_SCINT = {1.0, 1.0, 1.0, 1.0, 1.0}; // 保持能量范围覆盖NaI发射区间
-    std::vector<G4double> nai_RIND = {1.85, 1.85, 1.85, 1.85, 1.85};
-    // std::vector<G4double> nai_ABSL = {38. * cm, 38. * cm, 38. * cm, 38. * cm, 38. * cm};
-    std::vector<G4double> nai_ABSL = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm}; // 吸收长度设置为100cm
+    // // 材料属性表用LXe风格
+    // std::vector<G4double> nai_Energy = {2.07 * eV, 2.34 * eV, 2.62 * eV, 2.89 * eV, 3.10 * eV};
+    // std::vector<G4double> nai_SCINT = {1.0, 1.0, 1.0, 1.0, 1.0}; // 保持能量范围覆盖NaI发射区间
+    // std::vector<G4double> nai_RIND = {1.85, 1.85, 1.85, 1.85, 1.85};
+    // // std::vector<G4double> nai_ABSL = {38. * cm, 38. * cm, 38. * cm, 38. * cm, 38. * cm};
+    // std::vector<G4double> nai_ABSL = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm}; // 吸收长度设置为100cm
 
-    auto nai_mt = new G4MaterialPropertiesTable();
-    nai_mt->AddProperty("SCINTILLATIONCOMPONENT1", nai_Energy, nai_SCINT);
-    nai_mt->AddProperty("SCINTILLATIONCOMPONENT2", nai_Energy, nai_SCINT); // 没slow就全0也行
-    nai_mt->AddProperty("RINDEX", nai_Energy, nai_RIND);
-    nai_mt->AddProperty("ABSLENGTH", nai_Energy, nai_ABSL);
-    nai_mt->AddConstProperty("SCINTILLATIONYIELD", 38000. / MeV); // 或者先试12000看看能否产光
-    nai_mt->AddConstProperty("RESOLUTIONSCALE", 1.0);
-    nai_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 250. * ns);
-    nai_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 0. * ns);
-    nai_mt->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
-    nai_mt->AddConstProperty("SCINTILLATIONYIELD2", 0.0);
-    NaI_Tl->SetMaterialPropertiesTable(nai_mt);
+    // auto nai_mt = new G4MaterialPropertiesTable();
+    // nai_mt->AddProperty("SCINTILLATIONCOMPONENT1", nai_Energy, nai_SCINT);
+    // nai_mt->AddProperty("SCINTILLATIONCOMPONENT2", nai_Energy, nai_SCINT); // 没slow就全0也行
+    // nai_mt->AddProperty("RINDEX", nai_Energy, nai_RIND);
+    // nai_mt->AddProperty("ABSLENGTH", nai_Energy, nai_ABSL);
+    // nai_mt->AddConstProperty("SCINTILLATIONYIELD", 38000. / MeV); // 或者先试12000看看能否产光
+    // nai_mt->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    // nai_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 250. * ns);
+    // nai_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 0. * ns);
+    // nai_mt->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+    // nai_mt->AddConstProperty("SCINTILLATIONYIELD2", 0.0);
+    // NaI_Tl->SetMaterialPropertiesTable(nai_mt);
+
+
+    //======================= YSO Material Definition =======================
+    G4Element* elY = G4NistManager::Instance()->FindOrBuildElement("Y");
+    G4Element* elSi = G4NistManager::Instance()->FindOrBuildElement("Si");
+    G4Element* elO = G4NistManager::Instance()->FindOrBuildElement("O");
+    G4double density_YSO = 4.45 * g/cm3;
+    G4Material* YSO = new G4Material("YSO", density_YSO, 3);
+    YSO->AddElement(elY, 2);
+    YSO->AddElement(elSi, 1);
+    YSO->AddElement(elO, 5);
+
+    // 发射峰在420 nm => 2.95 eV 附近
+    std::vector<G4double> yso_Energy = {2.07 * eV, 2.34 * eV, 2.62 * eV, 2.89 * eV, 3.10 * eV};
+    std::vector<G4double> yso_SCINT = {1.0, 1.0, 1.0, 1.0, 1.0}; // 简单设定恒定发光强度
+    G4int Fukkkk = 0.6 *cm;
+    std::vector<G4double> yso_RIND = {1.8, 1.8, 1.8, 1.8, 1.8};  // 折射率 ~1.8
+    std::vector<G4double> yso_ABSL = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm}; // 吸收长度
+
+    auto yso_mt = new G4MaterialPropertiesTable();
+    yso_mt->AddProperty("SCINTILLATIONCOMPONENT1", yso_Energy, yso_SCINT);
+    yso_mt->AddProperty("SCINTILLATIONCOMPONENT2", yso_Energy, yso_SCINT); // 没 slow 成分可设为 0
+
+    yso_mt->AddProperty("RINDEX", yso_Energy, yso_RIND);
+    yso_mt->AddProperty("ABSLENGTH", yso_Energy, yso_ABSL);
+    yso_mt->AddConstProperty("SCINTILLATIONYIELD", 24000. / MeV); // 光产额
+    G4int Fuck666 = 1*cm;
+    yso_mt->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    yso_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 56. * ns); // 衰减时间
+    yso_mt->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 0. * ns);  // 无慢分量
+    yso_mt->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+    yso_mt->AddConstProperty("SCINTILLATIONYIELD2", 0.0);
+    YSO->SetMaterialPropertiesTable(yso_mt);
 
     //LocCry
     
-      G4double Crystal_gap = 0.00001 * cm;
-      G4int Crystal_nx = 10;
+      G4double Crystal_gap = 0.1 * mm;
+      G4int Crystal_nx = 11;
       G4int Crystal_ny = 1;
       G4int Crystal_nz = 1;
-      G4double crystal_l = 3 * cm; // 单个晶体的边长
-      // G4double Fuck = 6 *cm;//是的，你没看错，加了这一行代码就好了
+      G4double crystal_l = 3 * mm; // 单个晶体的边长
+      // G4double FuckGeant4 = 6 *cm;//是的，你没看错，加了这一行代码就不报错了
       G4double crystal_ly = 1 * crystal_l;
 
       G4double Crystal_x = crystal_l * Crystal_nx + Crystal_gap * (Crystal_nx - 1);
@@ -135,31 +168,16 @@ namespace B1
       G4double Crystal_z = crystal_l * Crystal_nz + Crystal_gap * (Crystal_nz - 1);
       
       auto solidCrystal = new G4Box("Crystal", crystal_l / 2, crystal_ly / 2, crystal_l / 2);
-      auto logicCrystal = new G4LogicalVolume(solidCrystal, NaI_Tl, "Crystal");
+      auto logicCrystal = new G4LogicalVolume(solidCrystal, YSO, "Crystal");
 
-      // // Logic Vaccum
-      // G4ThreeVector Vacuum_Size = G4ThreeVector(Crystal_x, Crystal_y, Crystal_z);
-      // G4Material* vac_mat = nist->FindOrBuildMaterial("G4_Galactic");
-      // auto vac_mt = new G4MaterialPropertiesTable();
-      // std::vector<G4double> energy_vac = {2.0 * eV, 3.5 * eV};
-      // std::vector<G4double> rindex_vac = {1.0, 1.0};
-      // vac_mt->AddProperty("RINDEX", energy_vac, rindex_vac);
-      // vac_mat->SetMaterialPropertiesTable(vac_mt);
-      // auto Vacuum_Box = new G4Box("Vacuum",  // its name
-      //                         0.55 * Crystal_x, 0.55 * Crystal_y, 0.55 * Crystal_z);  // its size
-  
-      // auto logic_Vaccum = new G4LogicalVolume(Vacuum_Box,  // its solid
-      //                                   vac_mat,  // its material
-      //                                   "Vacuum");  // its name
-  
-      // new G4PVPlacement(nullptr,  // no rotation
-      //                 G4ThreeVector(),  // at (0,0,0)
-      //                 logic_Vaccum,  // its logical volume
-      //                 "Vaccum",  // its name
-      //                 logicWorld,  // its mother  volume
-      //                 false,  // no boolean operation
-      //                 0,  // copy number
-      //                 checkOverlaps);  // overlaps checking
+
+      //Crystal Fillter
+      G4double Fillter_x = Crystal_gap;
+      G4double Fillter_y = crystal_ly * 0.5;
+      G4double Fillter_z = crystal_l * 0.5;
+
+      auto solidFillter = new G4Box("Fillter", Fillter_x/2, Fillter_y/2, Fillter_z/2);
+      auto logicFillter = new G4LogicalVolume(solidFillter, YSO, "Fillter");
 
 
       //SiPM Mat
@@ -198,10 +216,26 @@ namespace B1
                                                   false,  // no boolean operation
                                                   copyNo,  // copy number
                                                   checkOverlaps);  // overlaps checking
+            if(ix != 0)
+            {
+              G4double pos_fillter_x = -Crystal_x/2 + (crystal_l + Fillter_x) * ix - Fillter_x/2;
+              G4ThreeVector pos_fillter = G4ThreeVector(pos_fillter_x, posY, posZ);
+              auto physFillter = new G4PVPlacement(nullptr,
+                                                   pos_fillter,
+                                                   logicFillter,
+                                                   "Unit_fillter",
+                                                   logicEnv,
+                                                   false,
+                                                   copyNo,
+                                                   checkOverlaps);
+            }
           }
 
-      G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l*sipm_l_ratio/2 - 0.1 * cm;
-      G4double SiPM_PosX_r = Crystal_x/2 + sipm_l*sipm_l_ratio/2 + 0.1 * cm;
+      G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l * sipm_l_ratio/2 - 0.01 * mm  ;
+      G4double SiPM_PosX_r = Crystal_x/2 + sipm_l * sipm_l_ratio/2  + 0.01 * mm;
+      G4cout <<"DEBUG:SIPM_POSR"<<SiPM_PosX_r<<G4endl;
+      G4cout <<"DEBUG:CRYSTAL_X"<<Crystal_x/2<<G4endl;
+
       G4double SiPM_PosY = posY;
       G4double SiPM_PosZ = posZ;
       G4ThreeVector SiPM_Pos_l = G4ThreeVector(SiPM_PosX_l, SiPM_PosY, SiPM_PosZ);

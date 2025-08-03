@@ -5,9 +5,10 @@ from scipy.optimize import newton
 
 # ==== 常数 ====
 r  = 1.5
-x2 = 24.0
+x2 = 30
 eps = 1e-6
 lambda_abs = 40.0  # 加入吸收长度
+
 
 # ==== 读取数据 ====
 file_left  = r'.\build\AnaEx01_nt_PhotonLeft.csv'
@@ -57,14 +58,14 @@ for i, rho in enumerate(rho_array):
         continue
 
 # ==== 两种 DOI 计算方式 ====
-asymmetry = (L - R) / (L + R )
+asymmetry = ( R) / (L + R )
 log_ratio = np.log((L ) / (R ))
 doi2 = L / (L+R+eps) 
 
 # ==== Asymmetry 直方图 ====
 plt.figure(figsize=(8, 5))
 plt.hist(asymmetry, weights=total_photons, bins=1000, color='blue', alpha=0.7)
-plt.xlabel("DOI (Asymmetry: (L - R)/(L + R))")
+plt.xlabel("DOI (Asymmetry: ( R)/(L + R))")
 plt.ylabel("Total Photon Counts")
 plt.title("Photon Counts vs DOI (Asymmetry)")
 plt.grid(True)
@@ -100,4 +101,26 @@ plt.ylabel("Total Photon Counts")
 plt.title("Photon Counts vs x₁")
 plt.grid(True)
 plt.tight_layout()
+
+from scipy.signal import find_peaks
+
+# ==== 计算主峰位置并输出平均间隔 ====
+hist_vals, bin_edges = np.histogram(
+    x1_array[~np.isnan(x1_array)],
+    bins=1000,
+    weights=total_photons[~np.isnan(x1_array)]
+)
+bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+peaks, _ = find_peaks(hist_vals, prominence=5000)  # 可调参数
+peak_positions = bin_centers[peaks]
+peak_intervals = np.diff(peak_positions)
+
+if len(peak_intervals) > 0:
+    avg_interval = np.mean(peak_intervals)
+    print(f"平均主峰间隔约为：{avg_interval:.3f} cm")
+else:
+    print("未能识别出多个峰，无法计算间隔")
+
 plt.show()
+
+
