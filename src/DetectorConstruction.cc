@@ -231,8 +231,8 @@ namespace B1
             }
           }
 
-      G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l * sipm_l_ratio/2 - 0.01 * mm  ;
-      G4double SiPM_PosX_r = Crystal_x/2 + sipm_l * sipm_l_ratio/2  + 0.01 * mm;
+      G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l * sipm_l_ratio/2;
+      G4double SiPM_PosX_r = Crystal_x/2 + sipm_l * sipm_l_ratio/2;
       G4cout <<"DEBUG:SIPM_POSR"<<SiPM_PosX_r<<G4endl;
       G4cout <<"DEBUG:CRYSTAL_X"<<Crystal_x/2<<G4endl;
 
