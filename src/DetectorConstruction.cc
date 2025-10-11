@@ -29,6 +29,9 @@ namespace B1
   
   G4VPhysicalVolume* DetectorConstruction::Construct()
   {
+
+    G4double Surface_Sigma = 0.5;
+
     // Get nist material manager
     G4NistManager* nist = G4NistManager::Instance();
   
@@ -39,12 +42,21 @@ namespace B1
     auto env_mt = new G4MaterialPropertiesTable();
     std::vector<G4double> energy_env = {2.0 * eV, 3.5 * eV};
     std::vector<G4double> rindex_env = {1.0, 1.0};
-    // std::vector<G4double> abslen_env = {1000 * cm, 1000 * cm}; 
+       // std::vector<G4double> abslen_env = {1000 * cm, 1000 * cm}; 
     env_mt->AddProperty("RINDEX", energy_env, rindex_env);
     // env_mt->AddProperty("ABSLENGTH", energy_env, abslen_env);
     env_mat->SetMaterialPropertiesTable(env_mt);
+
+    G4Material* env_mat_air = nist -> FindOrBuildMaterial("G4_AIR");
+    auto env_mt_air = new G4MaterialPropertiesTable();
+    std::vector<G4double> energy_env_air = {2.0 * eV, 3.5 * eV};
+    std::vector<G4double> rindex_env_air = {1.0003, 1.0003};
+    env_mt_air->AddProperty("RINDEX", energy_env_air, rindex_env_air);
+    env_mat_air->SetMaterialPropertiesTable(env_mt_air);
+
+
  
-  
+ 
     // Option to switch on/off checking of volumes overlaps
     //
     G4bool checkOverlaps = true;
@@ -52,9 +64,12 @@ namespace B1
     //
     // World
     //
+    
     G4double world_sizeXY = env_sizeXY;
     G4double world_sizeZ =  env_sizeZ;
     G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+   
+    
   
     auto solidWorld =
       new G4Box("World",  // its name
@@ -80,10 +95,10 @@ namespace B1
                               0.5 * env_sizeXY, 0.5 * env_sizeXY, 0.5 * env_sizeZ);  // its size
   
     auto logicEnv = new G4LogicalVolume(solidEnv,  // its solid
-                                        env_mat,  // its material
+                                        env_mat_air,  // its material
                                         "Envelope");  // its name
   
-    new G4PVPlacement(nullptr,  // no rotation
+    auto physEnv = new G4PVPlacement(nullptr,  // no rotation
                       G4ThreeVector(),  // at (0,0,0)
                       logicEnv,  // its logical volume
                       "Envelope",  // its name
@@ -175,6 +190,7 @@ namespace B1
       G4double Fillter_x = Crystal_gap;
       G4double Fillter_y = crystal_ly * 0.5;
       G4double Fillter_z = crystal_l * 0.5;
+      G4bool IfFillter = true;
 
       auto solidFillter = new G4Box("Fillter", Fillter_x/2, Fillter_y/2, Fillter_z/2);
       auto logicFillter = new G4LogicalVolume(solidFillter, YSO, "Fillter");
@@ -216,7 +232,7 @@ namespace B1
                                                   false,  // no boolean operation
                                                   copyNo,  // copy number
                                                   checkOverlaps);  // overlaps checking
-            if(ix != 0)
+            if(ix != 0 && IfFillter)
             {
               G4double pos_fillter_x = -Crystal_x/2 + (crystal_l + Fillter_x) * ix - Fillter_x/2;
               G4ThreeVector pos_fillter = G4ThreeVector(pos_fillter_x, posY, posZ);
@@ -229,10 +245,27 @@ namespace B1
                                                    copyNo,
                                                    checkOverlaps);
             }
+            // auto CrystalToAir = new G4OpticalSurface("CrystalToAir");
+            // CrystalToAir->SetType(dielectric_dielectric);
+            // CrystalToAir->SetModel(unified);
+            // CrystalToAir->SetFinish(polished);          // 粗糙侧面
+            // CrystalToAir->SetSigmaAlpha(Surface_Sigma);
+
+            // std::string surfName = "Crystal-Air-" +
+            //                       std::to_string(ix) + "-" +
+            //                       std::to_string(iy) + "-" +
+            //                       std::to_string(iz);
+
+            // new G4LogicalBorderSurface(surfName,
+            //                           physCrystal, physEnv, CrystalToAir);
+
           }
 
       G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l * sipm_l_ratio/2;
       G4double SiPM_PosX_r = Crystal_x/2 + sipm_l * sipm_l_ratio/2;
+      //FuckSiPM
+      // G4double SiPM_PosX_l = -Crystal_x/2 - sipm_l * sipm_l_ratio/2 - 0.1 * mm;
+      // G4double SiPM_PosX_r = Crystal_x/2 + sipm_l * sipm_l_ratio/2 + 0.1 * mm;
       G4cout <<"DEBUG:SIPM_POSR"<<SiPM_PosX_r<<G4endl;
       G4cout <<"DEBUG:CRYSTAL_X"<<Crystal_x/2<<G4endl;
 
@@ -284,7 +317,9 @@ namespace B1
       // crystalsurface->SetType(dielectric_dielectric);
       // crystalsurface->SetModel(unified);
       // crystalsurface->SetFinish(polished);
-
+      // crystalsurface->SetSigmaAlpha(Surface_Sigma);
+      // G4cout << "DEBUG: CrystalSurface SigmaAlpha = "
+      //  << crystalsurface->GetSigmaAlpha() << G4endl;
       // new G4LogicalSkinSurface("CrystalSurface",logicCrystal, crystalsurface);
 
 
@@ -298,13 +333,25 @@ namespace B1
 
        // 1) 皮肤光学表面，只创建一次
 
-      G4OpticalSurface* SiPM_Surf = new G4OpticalSurface("SiPMSkinSurface");
-      SiPM_Surf->SetType(dielectric_dielectric);
-      SiPM_Surf->SetModel(unified);
-      SiPM_Surf->SetFinish(polished);
+      // G4OpticalSurface* SiPM_Surf = new G4OpticalSurface("SiPMSkinSurface");
+      // SiPM_Surf->SetType(dielectric_dielectric);
+      // SiPM_Surf->SetModel(unified);
+      // SiPM_Surf->SetFinish(polished);
 
-      // 2) 贴到整个 logicSiPM 上
-      new G4LogicalSkinSurface("SiPMSkinSurface",logicSiPM,SiPM_Surf);
+      // // 2) 贴到整个 logicSiPM 上
+      // new G4LogicalSkinSurface("SiPMSkinSurface",logicSiPM,SiPM_Surf);
+
+
+
+
+      // //Optical Surface between air and crystal
+      // G4OpticalSurface* Air_Crystal_Surf = new G4OpticalSurface("Air_Crystal_Surface");
+      // Air_Crystal_Surf -> SetType(dielectric_dielectric);
+      // Air_Crystal_Surf -> SetModel(unified);
+      // Air_Crystal_Surf->SetFinish(polished);       // 或 polished
+      // // Air_Crystal_Surf->SetSigmaAlpha(0);      // 需要粗糙度才设
+      // // new G4LogicalBorderSurface("Crystal-Air", physCrystal, physEnv, Air_Crystal_Surf);
+      // new G4LogicalSkinSurface("Air_Crystal_Surface", logicCrystal, Air_Crystal_Surf);
 
       //3 Double-end SiPM
  
