@@ -124,6 +124,16 @@ void HistoManager::Book()
     analysisManager->FinishNtuple();
 
 
+    fPhotonLRNtupleId = analysisManager->CreateNtuple("PhotonLRPerRod",
+                                                  "Per-rod Left/Right photon counts per event");
+    analysisManager->CreateNtupleIColumn("EventID");
+    analysisManager->CreateNtupleIColumn("iz");
+    analysisManager->CreateNtupleIColumn("iy");
+    analysisManager->CreateNtupleIColumn("Left");
+    analysisManager->CreateNtupleIColumn("Right");
+    analysisManager->FinishNtuple();
+
+
     fFactoryOn = true;
   }
 
@@ -286,4 +296,18 @@ void HistoManager::FillPhotonRight(G4int photonCounts)
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleIColumn(6, 0, photonCounts); // 第6个ntuple
     analysisManager->AddNtupleRow(6);
+}
+
+
+void HistoManager::FillPhotonLRPerRod(G4int iz, G4int iy,
+                                      G4int left, G4int right,
+                                      G4int eventId)
+{
+    auto* am = G4AnalysisManager::Instance();
+    am->FillNtupleIColumn(fPhotonLRNtupleId, 0, eventId);
+    am->FillNtupleIColumn(fPhotonLRNtupleId, 1, iz);
+    am->FillNtupleIColumn(fPhotonLRNtupleId, 2, iy);
+    am->FillNtupleIColumn(fPhotonLRNtupleId, 3, left);
+    am->FillNtupleIColumn(fPhotonLRNtupleId, 4, right);
+    am->AddNtupleRow(fPhotonLRNtupleId);
 }

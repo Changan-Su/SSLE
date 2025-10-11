@@ -31,10 +31,13 @@
 #include "G4Event.hh"
 #include "RunAction.hh"
 #include "HistoManager.hh"
+#include "G4RunManager.hh"
 
 #include "G4SystemOfUnits.hh"
 
 #include "Randomize.hh"//随机数库
+#include "DetectorConstruction.hh"
+
 namespace B1
 {
 
@@ -83,6 +86,12 @@ void EventAction::BeginOfEventAction(const G4Event* evt)
     G4cout << "\n---> Begin of event: " << evtNb << G4endl;
   }
 
+    const auto det = static_cast<const DetectorConstruction*>(
+    G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+    fNy = det->GetCrystal_ny();
+    fNz = det->GetCrystal_nz();
+    fLeftPerRod.assign(fNy*fNz, 0);
+    fRightPerRod.assign(fNy*fNz, 0);
 
 }
 
@@ -90,7 +99,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::EndOfEventAction(const G4Event*)
+void EventAction::EndOfEventAction(const G4Event* evt)
 {
 
     G4double edepToRecord = fEdep;
@@ -124,6 +133,14 @@ void EventAction::EndOfEventAction(const G4Event*)
     fHistoManager->FillPhotonGeneratedNtuple(fPhotonCountGenerated);
     fHistoManager->FillPhotonLeft(fPhotonCountLeft);
     fHistoManager->FillPhotonRight(fPhotonCountRight);
+
+    const int eventId = evt->GetEventID();
+    for (int iz=0; iz<fNz; ++iz)
+      for (int iy=0; iy<fNy; ++iy) {
+        int L = fLeftPerRod[RodIndex(iy,iz)];
+        int R = fRightPerRod[RodIndex(iy,iz)];
+        fHistoManager->FillPhotonLRPerRod(iz, iy, L, R, eventId);
+      }
 
   }
 

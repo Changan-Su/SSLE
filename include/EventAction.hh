@@ -81,6 +81,10 @@ class EventAction : public G4UserEventAction
     G4int GetPhotonCountRight() const { return fPhotonCountRight; }// 获取进入右侧探测器的光子数量
     void AddPhotonGenerated(G4int n = 1) { fPhotonCountGenerated += n; }// 统计生成的光子数量
     G4int GetPhotonGenerated() const { return fPhotonCountGenerated; }// 获取生成的光子数量
+    G4int Fuckrigt = 2;
+    void AddPhotonLeftAt(G4int iy, G4int iz)  { fLeftPerRod[RodIndex(iy,iz)]++; }
+    void AddPhotonRightAt(G4int iy, G4int iz) { fRightPerRod[RodIndex(iy,iz)]++; }
+    
 
     private:
     RunAction* fRunAction = nullptr;
@@ -96,6 +100,13 @@ class EventAction : public G4UserEventAction
     G4int fPhotonCountLeft = 0;
     G4int fPhotonCountRight = 0;
 
+
+    std::vector<int> fLeftPerRod, fRightPerRod;
+    G4int fNy=0, fNz=0;
+    inline int RodIndex(int iy, int iz) const { return iz*fNy + iy; }
+
+
+    
 
     HistoManager* fHistoManager = nullptr;
 };

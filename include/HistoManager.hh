@@ -62,6 +62,7 @@ class HistoManager
     void FillPhotonDepth(G4int depthIdx);
     void FillPhotonLeft(G4int photonCounts);
     void FillPhotonRight(G4int photonCounts);
+    void FillPhotonLRPerRod(G4int iz, G4int iy, G4int left, G4int right, G4int eventId);
 
 
 
@@ -69,7 +70,7 @@ class HistoManager
   private:
     G4bool fFactoryOn = false;
     G4int fDepthNtupleId = -1;  // Add this to your HistoManager class
-
+    G4int fPhotonLRNtupleId = -1;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

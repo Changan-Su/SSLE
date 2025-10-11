@@ -37,8 +37,12 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
+
 namespace B1
 {
+
+  
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -53,7 +57,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const DetectorConstruction* det)
   G4String particleName;
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName = "gamma");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
   fParticleGun->SetParticleEnergy(662 * keV);
 }
 
@@ -104,13 +107,23 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   // G4double x0 = rx/2 - G4RandFlat::shootInt(fDetectorConstruction->GetCrystal_nx())*(fDetectorConstruction->Getcrystal_l()+fDetectorConstruction->GetCrystal_gap())-fDetectorConstruction->Getcrystal_l()/2;
   // G4double y0 = -ry/2 + G4RandFlat::shootInt(fDetectorConstruction->GetCrystal_ny())*(fDetectorConstruction->Getcrystal_ly()+fDetectorConstruction->GetCrystal_gap())+fDetectorConstruction->Getcrystal_ly()/2;
   
-  G4double x0 = -rx/2 + rx * G4UniformRand();
-  G4double y0 = -ry/2 + ry * G4UniformRand();
+  // G4double x0 = -rx/2 + rx * G4UniformRand();
+  // G4double y0 = -ry/2 + ry * G4UniformRand();
   
   G4double z0 = -20 * cm;
+  G4double r0 = 20 * cm;
 
-  fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
 
+  G4double Dir_x = G4UniformRand()-0.5;
+  G4double Dir_y = G4UniformRand()-0.5;
+  G4double Dir_z = G4UniformRand()-0.5;
+
+  G4ThreeVector Ramdom_Dir = G4ThreeVector(Dir_x,Dir_y,Dir_z);
+  G4ThreeVector UniRam_Dir = Ramdom_Dir / Ramdom_Dir.mag();
+
+
+  fParticleGun->SetParticlePosition(UniRam_Dir * r0);
+  fParticleGun->SetParticleMomentumDirection(-UniRam_Dir);
   fParticleGun->GeneratePrimaryVertex(event);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

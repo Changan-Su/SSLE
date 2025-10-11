@@ -172,8 +172,8 @@ namespace B1
     
       G4double Crystal_gap = 0.1 * mm;
       G4int Crystal_nx = 11;
-      G4int Crystal_ny = 1;
-      G4int Crystal_nz = 1;
+      G4int Crystal_ny = 4;
+      G4int Crystal_nz = 4;
       G4double crystal_l = 3 * mm; // 单个晶体的边长
       // G4double FuckGeant4 = 6 *cm;//是的，你没看错，加了这一行代码就不报错了
       G4double crystal_ly = 1 * crystal_l;
@@ -280,7 +280,7 @@ namespace B1
               "SiPM_Left",
               logicEnv,
               false,
-              iz * 100000 + iy * 100 + 1,
+              iz * 1000000 + iy * 100 + 1,
               checkOverlaps
             );
       new G4PVPlacement(
@@ -290,7 +290,7 @@ namespace B1
               "SiPM_Right",
               logicEnv,
               false,
-              (iz+1) * 100000 + iy * 100 + 2,
+              (iz) * 1000000 + iy * 100 + 2,
               checkOverlaps
             );
 

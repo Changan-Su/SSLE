@@ -69,25 +69,43 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
     G4String volName = volume->GetName();
     // G4cout << "[DEBUG] Optical photon at volume: " << volName << G4endl;
-    if (volName.contains("SiPM")) {
-        G4int copyNo_SiPM = step->GetPreStepPoint()
-                                ->GetTouchableHandle()->GetCopyNumber();
-        G4int DOI_iz = copyNo_SiPM / 100000;
-        fEventAction->AddPhotonDepth(DOI_iz);
-        fEventAction->AddPhotonInPMT(1);//Photons Counts
-        if (copyNo_SiPM % 100 == 1) {
-        // Left SiPM
-        // G4int FuckU = 1;
-        fEventAction->AddPhotonLeft(1);
-        } 
-        else if (copyNo_SiPM % 100 == 2) {
-        // Right SiPM
-        fEventAction->AddPhotonRight(1);
-        }
+    // if (volName.contains("SiPM")) {
+    //     G4int copyNo_SiPM = step->GetPreStepPoint()
+    //                             ->GetTouchableHandle()->GetCopyNumber();
 
-        // G4cout<< "Debug:DOI" << DOI_iz << G4endl;
-        track->SetTrackStatus(fStopAndKill);  // 防止重复计数
+    //     G4int DOI_iz = copyNo_SiPM / 1000000;
+    //     fEventAction->AddPhotonDepth(DOI_iz);
+
+    //     fEventAction->AddPhotonInPMT(1);//Photons Counts
+
+    //     if (copyNo_SiPM % 100 == 1) {
+    //     // Left SiPM
+    //     // G4int FuckU = 1;
+    //     fEventAction->AddPhotonLeft(1);
+    //     } 
+    //     else if (copyNo_SiPM % 100 == 2) {
+    //     // Right SiPM
+    //     fEventAction->AddPhotonRight(1);
+    //     }
+
+    //     // G4cout<< "Debug:DOI" << DOI_iz << G4endl;
+    //     track->SetTrackStatus(fStopAndKill);  // 防止重复计数
+    // }
+
+    if (volName.contains("SiPM")) {
+    const G4int copyNo = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
+    const G4int iz = copyNo / 1000000;
+    const G4int iy = (copyNo - iz*1000000) / 100;   // 提取 iy
+    const G4int endTag = copyNo % 100;          // 1=Left, 2=Right
+
+    if (endTag == 1) {
+        fEventAction->AddPhotonLeftAt(iy, iz);
+    } else if (endTag == 2) {
+        fEventAction->AddPhotonRightAt(iy, iz);
     }
+    track->SetTrackStatus(fStopAndKill);
+}
+
     // G4ThreeVector pos = track->GetPosition();
     // // 你可以根据晶体阵列的实际大小设置阈值，比如 ±Crystal_x/2 ±1cm 边界
     // G4double maxX = fDetectorConstruction->GetCrystal_x()/2 + 0.1 * fDetectorConstruction->Getcrystal_l();
