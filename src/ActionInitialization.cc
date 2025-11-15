@@ -33,7 +33,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
-#include "G4runManager.hh"
+#include "G4RunManager.hh"
 
 namespace B1
 {
@@ -42,7 +42,8 @@ namespace B1
 
 void ActionInitialization::BuildForMaster() const
 {
-  auto runAction = new RunAction;
+  auto histoManager = new HistoManager(); 
+  auto runAction = new RunAction(histoManager);;
   SetUserAction(runAction);
 }
 

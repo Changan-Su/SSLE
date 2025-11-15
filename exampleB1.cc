@@ -21,7 +21,15 @@ int main(int argc, char** argv)
         ui = new G4UIExecutive(argc, argv);
     }
 
-    auto runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Serial);
+    #ifdef G4MULTITHREADED
+        G4MTRunManager* runManager = new G4MTRunManager;
+        runManager->SetNumberOfThreads(128);
+        G4cout << "### Running in MULTITHREADED mode with 4 threads ###" << G4endl;
+    #else
+        G4RunManager* runManager = new G4RunManager;
+        G4cout << "### Running in SERIAL mode ###" << G4endl;
+    #endif
+
 
     runManager->SetUserInitialization(new DetectorConstruction());
     // runManager->SetUserInitialization(new MyPhysicsList()); 

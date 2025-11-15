@@ -109,7 +109,7 @@ void HistoManager::Book()
     analysisManager->CreateNtupleIColumn("DepthIndex");
     analysisManager->FinishNtuple();
     // analysisManager->FillNtupleIColumn(4, 0, -999);
-    analysisManager->AddNtupleRow(4);
+    // analysisManager->AddNtupleRow(4);
 
 
     // G4cout << "[DEBUG] PhotonDepthNtuple index is: " 

@@ -20,6 +20,7 @@
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
 
+// #include "DetectorMessenger.hh"  
 
 namespace B1
 {
@@ -172,8 +173,8 @@ namespace B1
     
       G4double Crystal_gap = 0.1 * mm;
       G4int Crystal_nx = 11;
-      G4int Crystal_ny = 4;
-      G4int Crystal_nz = 4;
+      G4int Crystal_ny = 1;
+      G4int Crystal_nz = 1;
       G4double crystal_l = 3 * mm; // 单个晶体的边长
       // G4double FuckGeant4 = 6 *cm;//是的，你没看错，加了这一行代码就不报错了
       G4double crystal_ly = 1 * crystal_l;
@@ -188,8 +189,8 @@ namespace B1
 
       //Crystal Fillter
       G4double Fillter_x = Crystal_gap;
-      G4double Fillter_y = crystal_ly * 0.5;
-      G4double Fillter_z = crystal_l * 0.5;
+      G4double Fillter_y = crystal_ly * 0.3;
+      G4double Fillter_z = crystal_l * 0.2;
       G4bool IfFillter = true;
 
       auto solidFillter = new G4Box("Fillter", Fillter_x/2, Fillter_y/2, Fillter_z/2);

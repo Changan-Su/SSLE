@@ -1,7 +1,0 @@
-/vis/disable       
-/run/initialize     
-
-/gun/particle gamma
-/gun/energy 662 keV
-/run/beamOn 500
-    

@@ -34,6 +34,7 @@
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
+class DetectorMessenger;
 
 namespace B1
 {
@@ -62,11 +63,23 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4int GetCrystal_nz() const { return fCrystal_nz; } // Getter for number of crystals in height
     G4double Getcrystal_l() const { return fcrystal_l; } // Getter for crystal length
     G4double Getcrystal_ly() const { return fcrystal_ly; } // Getter for crystal width
+
+
+      // —— 新增：供 Messenger 写入的 setter（做最基本的保护）
+    void SetArrayNx(G4int v) { fPar_nx = std::max(1, v); }
+    void SetArrayNy(G4int v) { fPar_ny = std::max(1, v); }
+    void SetArrayNz(G4int v) { fPar_nz = std::max(1, v); }
+
   protected:
     G4LogicalVolume* fScoringVolume = nullptr;
     G4LogicalVolume* flogicSiPM = nullptr;  // PMT logical volume for optical photon tracking
 
   private:
+
+    G4int fPar_nx = 11;
+    G4int fPar_ny = 4;
+    G4int fPar_nz = 4;
+
     G4int fCrystal_gap ; // Gap between crystals
     G4int fCrystal_nx; // Number of crystals in one dimension
     G4int fCrystal_ny; // Number of crystals in the other dimension
@@ -77,7 +90,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double fCrystal_y; // Crystal size in y direction
     G4double fCrystal_z; // Crystal size in z direction
 
-
+    // Messenger 指针
+    DetectorMessenger* fMessenger = nullptr;
   };
 
 }  // namespace B1
