@@ -118,8 +118,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   G4double Dir_y = G4UniformRand()-0.5;
   G4double Dir_z = G4UniformRand()-0.5;
 
-  G4ThreeVector Ramdom_Dir = G4ThreeVector(Dir_x,Dir_y,Dir_z);
-  G4ThreeVector UniRam_Dir = Ramdom_Dir / Ramdom_Dir.mag();
+  // Build a random 3D vector from Dir_x, Dir_y, Dir_z and normalize it.
+  // G4ThreeVector Ramdom_Dir = G4ThreeVector(Dir_x,Dir_y,Dir_z);
+  // G4ThreeVector UniRam_Dir = Ramdom_Dir / Ramdom_Dir.mag();
 
 
   fParticleGun->SetParticlePosition(UniRam_Dir * r0);
